@@ -118,9 +118,12 @@ public class LocksListeners implements Listener {
 
         UUID owner = storage.getContainerOwner(block);
         if (!event.getPlayer().getUniqueId().equals(owner)) {
-            sendChestLockedMessage(player, block, owner);
-            if (!player.hasPermission("hiddenite.locks.bypass")) {
-                event.setCancelled(true);
+            List<UUID> users = storage.getContainerUsers(block);
+            if (!users.contains(player.getUniqueId())) {
+                sendChestLockedMessage(player, block, owner);
+                if (!player.hasPermission("hiddenite.locks.bypass")) {
+                    event.setCancelled(true);
+                }
             }
         }
     }

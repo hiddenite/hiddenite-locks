@@ -15,9 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.UUID;
-
-// TODO add and remove users that can open
 
 public class LocksPlugin extends JavaPlugin {
     private final LocksStorage storage = new LocksStorage(this);
@@ -91,15 +90,7 @@ public class LocksPlugin extends JavaPlugin {
     }
 
     public void unlockChest(Player player, Block block) {
-        boolean alreadyLocked = storage.isContainerLocked(block);
-        UUID owner = storage.getContainerOwner(block);
-
-        if (!player.getUniqueId().equals(owner) && !player.hasPermission("hiddenite.locks.bypass")) {
-            sendMessage(player, "error-not-owner");
-            return;
-        }
-        if (!alreadyLocked) {
-            sendMessage(player, "error-not-locked");
+        if (invalidOwnerPermissions(player, block)) {
             return;
         }
 
@@ -122,11 +113,69 @@ public class LocksPlugin extends JavaPlugin {
     }
 
     public void addPlayerToLock(Player owner, OfflinePlayer target, Block block) {
-        // TODO
+        if (invalidOwnerPermissions(owner, block)) {
+            return;
+        }
+
+        if (owner.getUniqueId().equals(target.getUniqueId())) {
+            sendMessage(owner, "error-already-has-access", "{NAME}", target.getName());
+            return;
+        }
+
+        List<UUID> allowedUsers = storage.getContainerUsers(block);
+        if (allowedUsers.contains(target.getUniqueId())) {
+            sendMessage(owner, "error-already-has-access", "{NAME}", target.getName());
+            return;
+        }
+
+        allowedUsers.add(target.getUniqueId());
+
+        Chest chest = (Chest)block.getState();
+        Chest[] chestSides = getChestSides(chest);
+        for (Chest side : chestSides) {
+            storage.setContainerUsers(side.getBlock(), allowedUsers);
+        }
+
+        sendMessage(owner, "lock-add-success", "{NAME}", target.getName());
     }
 
     public void removePlayerFromLock(Player owner, OfflinePlayer target, Block block) {
-        // TODO
+        if (invalidOwnerPermissions(owner, block)) {
+            return;
+        }
+
+        if (owner.getUniqueId().equals(target.getUniqueId())) {
+            return;
+        }
+
+        List<UUID> allowedUsers = storage.getContainerUsers(block);
+        if (!allowedUsers.remove(target.getUniqueId())) {
+            sendMessage(owner, "error-already-has-no-access", "{NAME}", target.getName());
+            return;
+        }
+
+        Chest chest = (Chest)block.getState();
+        Chest[] chestSides = getChestSides(chest);
+        for (Chest side : chestSides) {
+            storage.setContainerUsers(side.getBlock(), allowedUsers);
+        }
+
+        sendMessage(owner, "lock-remove-success", "{NAME}", target.getName());
+    }
+
+    private boolean invalidOwnerPermissions(Player owner, Block block) {
+        boolean alreadyLocked = storage.isContainerLocked(block);
+        UUID ownerId = storage.getContainerOwner(block);
+
+        if (!owner.getUniqueId().equals(ownerId) && !owner.hasPermission("hiddenite.locks.bypass")) {
+            sendMessage(owner, "error-not-owner");
+            return true;
+        }
+        if (!alreadyLocked) {
+            sendMessage(owner, "error-not-locked");
+            return true;
+        }
+        return false;
     }
 
     private Chest[] getChestSides(Chest chest) {
