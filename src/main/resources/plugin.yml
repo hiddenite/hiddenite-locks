@@ -1,0 +1,16 @@
+main: eu.hiddenite.locks.LocksPlugin
+name: HiddeniteLocks
+version: 1.0.0
+api-version: 1.15
+author: Hiddenite
+commands:
+  lock:
+    description: "Locks a container."
+    usage: /lock [+/- <joueur>]
+  unlock:
+    description: "Unlocks a container."
+    usage: /unlock
+permissions:
+  hiddenite.locks.bypass:
+    description: "Can access and unlock locked containers."
+    default: op
