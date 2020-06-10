@@ -5,10 +5,7 @@ import eu.hiddenite.locks.utils.LocksStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Container;
-import org.bukkit.block.Hopper;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +18,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.DoubleChestInventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +45,37 @@ public class LocksListeners implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onBlockPlace(final BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        if (block.getType() != Material.CHEST) {
+            return;
+        }
+
+        boolean mightCreateDoubleChest = isBlockSingleLockedChest(block.getRelative(BlockFace.NORTH)) ||
+                isBlockSingleLockedChest(block.getRelative(BlockFace.SOUTH)) ||
+                isBlockSingleLockedChest(block.getRelative(BlockFace.WEST)) ||
+                isBlockSingleLockedChest(block.getRelative(BlockFace.EAST));
+
+        if (mightCreateDoubleChest) {
+            event.setCancelled(true);
+            plugin.sendMessage(player, "chest-nearby-locked");
+        }
+    }
+
+    private boolean isBlockSingleLockedChest(Block block) {
+        if (block.getType() != Material.CHEST) {
+            return false;
+        }
+        Chest chest = (Chest)block.getState();
+        if (chest.getInventory() instanceof DoubleChestInventory) {
+            return false;
+        }
+        return storage.isContainerLocked(block);
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -60,11 +89,14 @@ public class LocksListeners implements Listener {
         }
 
         UUID owner = storage.getContainerOwner(block);
-        if (!event.getPlayer().getUniqueId().equals(owner)) {
+        if (!event.getPlayer().getUniqueId().equals(owner) && !player.hasPermission("hiddenite.locks.bypass")) {
             event.setCancelled(true);
             sendChestLockedMessage(player, block, owner);
         } else {
-            plugin.sendMessage(player, "unlock-success");
+            Chest chest = (Chest)block.getState();
+            if (!(chest.getInventory() instanceof DoubleChestInventory)) {
+                plugin.sendMessage(player, "unlock-success");
+            }
         }
     }
 
@@ -86,8 +118,10 @@ public class LocksListeners implements Listener {
 
         UUID owner = storage.getContainerOwner(block);
         if (!event.getPlayer().getUniqueId().equals(owner)) {
-            event.setCancelled(true);
             sendChestLockedMessage(player, block, owner);
+            if (!player.hasPermission("hiddenite.locks.bypass")) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -106,11 +140,13 @@ public class LocksListeners implements Listener {
         Chest chest = (Chest)event.getSource().getHolder();
         if (storage.isContainerLocked(chest)) {
             event.setCancelled(true);
-            Hopper hopper = (Hopper)event.getDestination().getHolder();
-            UUID chestOwner = storage.getContainerOwner(chest);
-            UUID hopperOwner = storage.getContainerOwner(hopper);
-            if (chestOwner != null && chestOwner.equals(hopperOwner)) {
-                event.setCancelled(false);
+            if (event.getDestination().getHolder() instanceof Hopper) {
+                Hopper hopper = (Hopper)event.getDestination().getHolder();
+                UUID chestOwner = storage.getContainerOwner(chest);
+                UUID hopperOwner = storage.getContainerOwner(hopper);
+                if (chestOwner != null && chestOwner.equals(hopperOwner)) {
+                    event.setCancelled(false);
+                }
             }
         }
     }

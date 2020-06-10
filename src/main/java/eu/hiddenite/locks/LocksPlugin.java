@@ -8,13 +8,15 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
-// TODO bypass permission (open, unlock, break)
 // TODO add and remove users that can open
 
 public class LocksPlugin extends JavaPlugin {
@@ -70,11 +72,16 @@ public class LocksPlugin extends JavaPlugin {
             return;
         }
 
-        storage.lockContainer(block);
+        Chest chest = (Chest)block.getState();
+        Chest[] chestSides = getChestSides(chest);
+        for (Chest side : chestSides) {
+            storage.lockContainer(side.getBlock());
+        }
 
         getLogger().info(String.format(
-                "Player %s locked the chest %s:[%d, %d, %d].",
+                "Player %s locked the %s %s:[%d, %d, %d].",
                 player.getName(),
+                chestSides.length == 2 ? "double-chest" : "chest",
                 player.getWorld().getName(),
                 block.getX(),
                 block.getY(),
@@ -87,7 +94,7 @@ public class LocksPlugin extends JavaPlugin {
         boolean alreadyLocked = storage.isContainerLocked(block);
         UUID owner = storage.getContainerOwner(block);
 
-        if (!player.getUniqueId().equals(owner)) {
+        if (!player.getUniqueId().equals(owner) && !player.hasPermission("hiddenite.locks.bypass")) {
             sendMessage(player, "error-not-owner");
             return;
         }
@@ -96,11 +103,16 @@ public class LocksPlugin extends JavaPlugin {
             return;
         }
 
-        storage.unlockContainer(block);
+        Chest chest = (Chest)block.getState();
+        Chest[] chestSides = getChestSides(chest);
+        for (Chest side : chestSides) {
+            storage.unlockContainer(side.getBlock());
+        }
 
         getLogger().info(String.format(
-                "Player %s unlocked the chest %s:[%d, %d, %d].",
+                "Player %s unlocked the %s %s:[%d, %d, %d].",
                 player.getName(),
+                chestSides.length == 2 ? "double-chest" : "chest",
                 player.getWorld().getName(),
                 block.getX(),
                 block.getY(),
@@ -115,5 +127,25 @@ public class LocksPlugin extends JavaPlugin {
 
     public void removePlayerFromLock(Player owner, OfflinePlayer target, Block block) {
         // TODO
+    }
+
+    private Chest[] getChestSides(Chest chest) {
+        boolean isDoubleChest = chest.getInventory() instanceof DoubleChestInventory;
+        if (isDoubleChest) {
+            DoubleChest doubleChest = (DoubleChest)chest.getInventory().getHolder();
+            if (doubleChest == null) {
+                getLogger().warning("Chest has a double inventory but no holder?");
+                return new Chest[] { chest };
+            }
+            Chest leftSide = (Chest)doubleChest.getLeftSide();
+            Chest rightSide = (Chest)doubleChest.getRightSide();
+            if (leftSide == null || rightSide == null) {
+                getLogger().warning("DoubleChest is missing a side?");
+                return new Chest[] { chest };
+            }
+            return new Chest[] { leftSide, rightSide };
+        } else {
+            return new Chest[] { chest };
+        }
     }
 }
