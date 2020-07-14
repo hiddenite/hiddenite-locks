@@ -136,12 +136,16 @@ public class LocksListeners implements Listener {
         if (event.getDestination().getType() != InventoryType.HOPPER) {
             return;
         }
-        if (!(event.getSource().getHolder() instanceof Chest)) {
-            return;
+
+        Chest chest = null;
+        if (event.getSource().getHolder() instanceof Chest) {
+            chest = (Chest)event.getSource().getHolder();
+        } else if (event.getSource().getHolder() instanceof DoubleChest) {
+            DoubleChest doubleChest = (DoubleChest)event.getSource().getHolder();
+            chest = (Chest)doubleChest.getLeftSide();
         }
 
-        Chest chest = (Chest)event.getSource().getHolder();
-        if (storage.isContainerLocked(chest)) {
+        if (chest != null && storage.isContainerLocked(chest)) {
             event.setCancelled(true);
             if (event.getDestination().getHolder() instanceof Hopper) {
                 Hopper hopper = (Hopper)event.getDestination().getHolder();

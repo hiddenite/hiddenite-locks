@@ -44,7 +44,7 @@ public class LocksPlugin extends JavaPlugin {
             for (int i = 0; i < parameters.length - 1; i += 2) {
                 message = message.replace(parameters[i].toString(), parameters[i + 1].toString());
             }
-            player.sendMessage(TextComponent.fromLegacyText(message));
+            player.spigot().sendMessage(TextComponent.fromLegacyText(message));
         }
     }
 

@@ -12,8 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
-
 public class UnlockCommand implements CommandExecutor, TabCompleter {
     private final LocksPlugin plugin;
 
@@ -22,10 +20,10 @@ public class UnlockCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@Nonnull final CommandSender sender,
-                             @Nonnull final Command command,
-                             @Nonnull final String alias,
-                             @Nonnull final String[] args) {
+    public boolean onCommand(final CommandSender sender,
+                             final Command command,
+                             final String alias,
+                             final String[] args) {
         if (!(sender instanceof Player)) {
             return true;
         }
@@ -43,10 +41,10 @@ public class UnlockCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@Nonnull final CommandSender sender,
-                                      @Nonnull final Command command,
-                                      @Nonnull final String alias,
-                                      @Nonnull final String[] args) {
+    public List<String> onTabComplete(final CommandSender sender,
+                                      final Command command,
+                                      final String alias,
+                                      final String[] args) {
         return Collections.emptyList();
     }
 }
