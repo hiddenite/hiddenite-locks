@@ -1,7 +1,7 @@
 main: eu.hiddenite.locks.LocksPlugin
 name: HiddeniteLocks
 version: 1.0.0
-api-version: 1.15
+api-version: 1.16
 author: Hiddenite
 commands:
   lock:
