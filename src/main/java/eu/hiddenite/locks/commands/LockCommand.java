@@ -32,7 +32,7 @@ public class LockCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player)sender;
 
-        if (args.length != 0 && args.length != 2) {
+        if (args.length != 0 && args.length < 2) {
             plugin.sendMessage(player, "lock-usage");
             return true;
         }
@@ -52,17 +52,20 @@ public class LockCommand implements CommandExecutor, TabCompleter {
                 plugin.sendMessage(player, "lock-usage");
                 return true;
             }
-
-            OfflinePlayer targetPlayer = plugin.findExistingPlayer(args[1]);
-            if (targetPlayer == null) {
-                plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", args[1]);
-                return true;
-            }
-
-            if (operation.equals("+")) {
-                plugin.addPlayerToLock(player, targetPlayer, block);
-            } else {
-                plugin.removePlayerFromLock(player, targetPlayer, block);
+            String[] targetedPlayers = new String[args.length-1];
+            for (int i=1 ; i < args.length ; i++) targetedPlayers[i-1] = args[i];
+            for (String targetedPlayer : targetedPlayers) {
+            	OfflinePlayer targetPlayer = plugin.findExistingPlayer(targetedPlayer);
+	            if (targetPlayer == null) {
+	                plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", targetedPlayer);
+	                return true;
+	            }
+	
+	            if (operation.equals("+")) {
+	                plugin.addPlayerToLock(player, targetPlayer, block);
+	            } else {
+	                plugin.removePlayerFromLock(player, targetPlayer, block);
+	            }
             }
         }
 
@@ -77,7 +80,7 @@ public class LockCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return Arrays.asList("+", "-");
         }
-        if (args.length == 2) {
+        if (args.length >= 2) {
             return null; // Player name
         }
         return Collections.emptyList();
