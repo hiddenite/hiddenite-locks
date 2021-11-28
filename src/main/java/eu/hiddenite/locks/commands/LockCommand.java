@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.hiddenite.locks.LocksPlugin;
+
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -38,8 +40,9 @@ public class LockCommand implements CommandExecutor, TabCompleter {
 
         Block block = player.getTargetBlockExact(6);
 
-        if (block == null || !plugin.isLockable(block)) {
-            plugin.sendMessage(player, "error-look-at-container");
+        if (block == null || (!plugin.isLockable(block) && block.getType() != Material.CHEST)) {
+        	String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
+            plugin.sendMessage(player, configPath);
             return true;
         }
 
@@ -51,12 +54,10 @@ public class LockCommand implements CommandExecutor, TabCompleter {
                 plugin.sendMessage(player, "lock-usage");
                 return true;
             }
-            String[] targetedPlayers = new String[args.length-1];
-            for (int i=1 ; i < args.length ; i++) targetedPlayers[i-1] = args[i];
-            for (String targetedPlayer : targetedPlayers) {
-            	OfflinePlayer targetPlayer = plugin.findExistingPlayer(targetedPlayer);
+            for (int i=1 ; i < args.length ; i++) {
+            	OfflinePlayer targetPlayer = plugin.findExistingPlayer(args[i]);
 	            if (targetPlayer == null) {
-	                plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", targetedPlayer);
+	                plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", args[i]);
 	                return true;
 	            }
 	
