@@ -130,7 +130,7 @@ public class LocksListeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
-        if (!plugin.isInventoryLockable(event.getSource().getType())) {
+        if (!plugin.isLockable(event.getSource().getLocation().getBlock())) {
             return;
         }
         if (event.getDestination().getType() != InventoryType.HOPPER) {
