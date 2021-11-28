@@ -14,8 +14,6 @@ import org.bukkit.block.Container;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -63,13 +61,12 @@ public class LocksPlugin extends JavaPlugin {
     }
     
     public boolean isLockable(Block block) {
-    	if (block.getState() instanceof Container && getConfig().getString("inventory-lockable").contains(block.getType().toString())) return true;
-		return false;
+    	return block.getState() instanceof Container && getConfig().getStringList("inventory-lockable").contains(block.getType().toString());
     }
     
-    public boolean isInventoryLockable(InventoryType inventoryType) {
-    	if (getConfig().getString("inventory-lockable").contains(inventoryType.toString())) return true;
-    	return false;
+    public String getSupportedConfigPath(String oldPath, String newPath) {
+    	if (getConfig().getString("messages." + newPath) != null) return newPath;
+    	else return oldPath;
     }
 
     public void lockContainer(Player player, Block block) {
@@ -86,7 +83,6 @@ public class LocksPlugin extends JavaPlugin {
         }
 
         String logBlock = "None";
-        String log = "Player %s locked the %s %s:[%d, %d, %d].";
         if (block.getType() == Material.CHEST) {
 	        Chest chest = (Chest)block.getState();
 	        Chest[] chestSides = getChestSides(chest);
@@ -95,13 +91,12 @@ public class LocksPlugin extends JavaPlugin {
 	        }
 	        logBlock = chestSides.length == 2 ? "double-chest" : "chest";
     	} else {
-    		BlockInventoryHolder invBlock = (BlockInventoryHolder)block.getState();
-    		storage.lockContainer(invBlock.getBlock());
-    		logBlock = invBlock.getBlock().getType().toString();
+    		storage.lockContainer(block);
+    		logBlock = block.getType().toString();
      	}
         
         getLogger().info(String.format(
-        		log,
+        		"Player %s locked the %s %s:[%d, %d, %d].",
         		player.getName(),
         		logBlock,
                 player.getWorld().getName(),
@@ -127,9 +122,8 @@ public class LocksPlugin extends JavaPlugin {
 	        }
 	        logBlock = chestSides.length == 2 ? "double-chest" : "chest";
     	} else {
-    		BlockInventoryHolder invBlock = (BlockInventoryHolder)block.getState();
-    		storage.unlockContainer(invBlock.getBlock());
-    		logBlock = invBlock.getBlock().getType().toString();
+    		storage.unlockContainer(block);
+    		logBlock = block.getType().toString();
      	}
         
         getLogger().info(String.format(
@@ -168,10 +162,7 @@ public class LocksPlugin extends JavaPlugin {
             for (Chest side : chestSides) {
                 storage.setContainerUsers(side.getBlock(), allowedUsers);
             }
-    	} else {
-    		BlockInventoryHolder invBlock = (BlockInventoryHolder)block.getState();
-    		storage.setContainerUsers(invBlock.getBlock(), allowedUsers);
-     	}
+    	} else storage.setContainerUsers(block, allowedUsers);
 
         sendMessage(owner, "lock-add-success", "{NAME}", target.getName());
     }
@@ -197,10 +188,7 @@ public class LocksPlugin extends JavaPlugin {
             for (Chest side : chestSides) {
                 storage.setContainerUsers(side.getBlock(), allowedUsers);
             }
-    	} else {
-    		BlockInventoryHolder invBlock = (BlockInventoryHolder)block.getState();
-    		storage.setContainerUsers(invBlock.getBlock(), allowedUsers);
-     	}
+    	} else storage.setContainerUsers(block, allowedUsers);
 
         sendMessage(owner, "lock-remove-success", "{NAME}", target.getName());
     }
