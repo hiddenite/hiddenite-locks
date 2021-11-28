@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.hiddenite.locks.LocksPlugin;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -39,13 +38,13 @@ public class LockCommand implements CommandExecutor, TabCompleter {
 
         Block block = player.getTargetBlockExact(6);
 
-        if (block == null || block.getType() != Material.CHEST) {
-            plugin.sendMessage(player, "error-look-at-chest");
+        if (block == null || !plugin.isLockable(block)) {
+            plugin.sendMessage(player, "error-look-at-container");
             return true;
         }
 
         if (args.length == 0) {
-            plugin.lockChest(player, block);
+            plugin.lockContainer(player, block);
         } else {
             String operation = args[0];
             if (!operation.equals("+") && !operation.equals("-")) {
