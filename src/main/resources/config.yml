@@ -1,15 +1,23 @@
 messages:
-  lock-success: "Â§bChest locked. Use Â§a/unlockÂ§b to unlock it and Â§a/lock + <player1> <player2>...Â§b to add other players."
-  lock-usage: "Â§a/lock Â§b[+/- <player1> <player2>...]"
-  unlock-success: "Â§bChest unlocked."
-  lock-add-success: "Â§a{NAME}Â§b can now use this chest."
-  lock-remove-success: "Â§a{NAME}Â§b can no longer use this chest."
-  error-look-at-chest: "Â§cYou must look at a chest to use this command."
-  error-already-locked: "Â§cThis chest is already locked."
-  error-not-locked: "Â§cThis chest isn't locked."
-  error-not-owner: "Â§cThis chest doesn't belong to you."
-  error-already-has-access: "Â§6{NAME}Â§c can already use this chest."
-  error-already-has-no-access: "Â§6{NAME}Â§c cannot use this chest."
-  error-player-does-not-exist: "Â§cThe player Â§6{NAME}Â§c doesn't exist."
-  chest-locked: "Â§bThis chest was locked by Â§a{NAME}Â§b."
-  chest-nearby-locked: "Â§cThe chest next to this one is locked."
+  lock-success: "§bcontainer locked. Use §a/unlock§b to unlock it and §a/lock + <player1> <player2>...§b to add other players."
+  lock-usage: "§a/lock §b[+/- <player1> <player2>...]"
+  unlock-success: "§bcontainer unlocked."
+  lock-add-success: "§a{NAME}§b can now use this container."
+  lock-remove-success: "§a{NAME}§b can no longer use this container."
+  error-look-at-container: "§cYou must look at a container to use this command."
+  error-already-locked: "§cThis container is already locked."
+  error-not-locked: "§cThis container isn't locked."
+  error-not-owner: "§cThis container doesn't belong to you."
+  error-already-has-access: "§6{NAME}§c can already use this container."
+  error-already-has-no-access: "§6{NAME}§c cannot use this container."
+  error-player-does-not-exist: "§cThe player §6{NAME}§c doesn't exist."
+  container-locked: "§bThis container was locked by §a{NAME}§b."
+  chest-nearby-locked: "§cThe container next to this one is locked."
+
+inventory-lockable: [
+  "CHEST", 
+  "TRAPPED_CHEST", 
+  "BARREL", 
+  "SHULKER_BOX"
+]
+  
