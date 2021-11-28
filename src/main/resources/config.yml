@@ -1,6 +1,6 @@
 messages:
-  lock-success: "§bcontainer locked. Use §a/unlock§b to unlock it and §a/lock + <player1> <player2>...§b to add other players."
-  lock-usage: "§a/lock §b[+/- <player1> <player2>...]"
+  lock-success: "§bcontainer locked. Use §a/unlock§b to unlock it and §a/lock + <players>§b to add other players."
+  lock-usage: "§a/lock §b[+/- <players>]"
   unlock-success: "§bcontainer unlocked."
   lock-add-success: "§a{NAME}§b can now use this container."
   lock-remove-success: "§a{NAME}§b can no longer use this container."
@@ -12,7 +12,7 @@ messages:
   error-already-has-no-access: "§6{NAME}§c cannot use this container."
   error-player-does-not-exist: "§cThe player §6{NAME}§c doesn't exist."
   container-locked: "§bThis container was locked by §a{NAME}§b."
-  chest-nearby-locked: "§cThe container next to this one is locked."
+  container-nearby-locked: "§cThe container next to this one is locked."
 
 inventory-lockable: [
   "CHEST", 
