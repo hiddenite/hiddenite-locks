@@ -41,7 +41,7 @@ public class LockCommand implements CommandExecutor, TabCompleter {
         Block block = player.getTargetBlockExact(6);
 
         if (block == null || (!plugin.isLockable(block) && block.getType() != Material.CHEST)) {
-        	String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
+            String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
             plugin.sendMessage(player, configPath);
             return true;
         }
