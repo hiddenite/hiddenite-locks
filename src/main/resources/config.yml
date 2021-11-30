@@ -1,7 +1,7 @@
 messages:
-  lock-success: "§bcontainer locked. Use §a/unlock§b to unlock it and §a/lock + <players>§b to add other players."
+  lock-success: "§bContainer locked. Use §a/unlock§b to unlock it and §a/lock + <players>§b to add other players."
   lock-usage: "§a/lock §b[+/- <players>]"
-  unlock-success: "§bcontainer unlocked."
+  unlock-success: "§bContainer unlocked."
   lock-add-success: "§a{NAME}§b can now use this container."
   lock-remove-success: "§a{NAME}§b can no longer use this container."
   error-look-at-container: "§cYou must look at a container to use this command."
