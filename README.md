@@ -1,1 +1,1 @@
-Gtihub source: (hiddenite/hiddenite-locks)[https://github.com/hiddenite/hiddenite-locks]
+Gtihub source: [hiddenite/hiddenite-locks](https://github.com/hiddenite/hiddenite-locks)
