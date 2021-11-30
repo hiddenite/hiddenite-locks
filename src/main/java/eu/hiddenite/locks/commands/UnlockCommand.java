@@ -5,7 +5,6 @@ import java.util.List;
 
 import eu.hiddenite.locks.LocksPlugin;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,7 +31,7 @@ public class UnlockCommand implements CommandExecutor, TabCompleter {
         Player player = (Player)sender;
         Block block = player.getTargetBlockExact(5);
 
-        if (block == null || (!plugin.isLockable(block) && block.getType() != Material.CHEST)) {
+        if (block == null || !plugin.isLockable(block)) {
         	String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
             plugin.sendMessage(player, configPath);
             return true;
