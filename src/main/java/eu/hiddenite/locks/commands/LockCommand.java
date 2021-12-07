@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.hiddenite.locks.LocksPlugin;
-import org.bukkit.Material;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -32,37 +32,39 @@ public class LockCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player)sender;
 
-        if (args.length != 0 && args.length != 2) {
+        if (args.length == 1) {
             plugin.sendMessage(player, "lock-usage");
             return true;
         }
 
         Block block = player.getTargetBlockExact(6);
 
-        if (block == null || block.getType() != Material.CHEST) {
-            plugin.sendMessage(player, "error-look-at-chest");
+        if (block == null || !plugin.isLockable(block)) {
+            String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
+            plugin.sendMessage(player, configPath);
             return true;
         }
 
         if (args.length == 0) {
-            plugin.lockChest(player, block);
+            plugin.lockContainer(player, block);
         } else {
             String operation = args[0];
             if (!operation.equals("+") && !operation.equals("-")) {
                 plugin.sendMessage(player, "lock-usage");
                 return true;
             }
+            for (int i = 1; i < args.length; i++) {
+                OfflinePlayer targetPlayer = plugin.findExistingPlayer(args[i]);
+                if (targetPlayer == null) {
+                    plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", args[i]);
+                    continue;
+                }
 
-            OfflinePlayer targetPlayer = plugin.findExistingPlayer(args[1]);
-            if (targetPlayer == null) {
-                plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", args[1]);
-                return true;
-            }
-
-            if (operation.equals("+")) {
-                plugin.addPlayerToLock(player, targetPlayer, block);
-            } else {
-                plugin.removePlayerFromLock(player, targetPlayer, block);
+                if (operation.equals("+")) {
+                    plugin.addPlayerToLock(player, targetPlayer, block);
+                } else {
+                    plugin.removePlayerFromLock(player, targetPlayer, block);
+                }
             }
         }
 
@@ -77,7 +79,7 @@ public class LockCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return Arrays.asList("+", "-");
         }
-        if (args.length == 2) {
+        if (args.length >= 2) {
             return null; // Player name
         }
         return Collections.emptyList();
