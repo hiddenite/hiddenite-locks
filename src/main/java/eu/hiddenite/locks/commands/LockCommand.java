@@ -32,7 +32,7 @@ public class LockCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player)sender;
 
-        if (args.length != 0 && args.length < 2) {
+        if (args.length == 1) {
             plugin.sendMessage(player, "lock-usage");
             return true;
         }
@@ -53,18 +53,18 @@ public class LockCommand implements CommandExecutor, TabCompleter {
                 plugin.sendMessage(player, "lock-usage");
                 return true;
             }
-            for (int i=1 ; i < args.length ; i++) {
-            	OfflinePlayer targetPlayer = plugin.findExistingPlayer(args[i]);
-	            if (targetPlayer == null) {
-	                plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", args[i]);
-	                return true;
-	            }
-	
-	            if (operation.equals("+")) {
-	                plugin.addPlayerToLock(player, targetPlayer, block);
-	            } else {
-	                plugin.removePlayerFromLock(player, targetPlayer, block);
-	            }
+            for (int i = 1; i < args.length; i++) {
+                OfflinePlayer targetPlayer = plugin.findExistingPlayer(args[i]);
+                if (targetPlayer == null) {
+                    plugin.sendMessage(player, "error-player-does-not-exist", "{NAME}", args[i]);
+                    continue;
+                }
+
+                if (operation.equals("+")) {
+                    plugin.addPlayerToLock(player, targetPlayer, block);
+                } else {
+                    plugin.removePlayerFromLock(player, targetPlayer, block);
+                }
             }
         }
 

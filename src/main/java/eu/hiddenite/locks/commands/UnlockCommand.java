@@ -32,7 +32,7 @@ public class UnlockCommand implements CommandExecutor, TabCompleter {
         Block block = player.getTargetBlockExact(5);
 
         if (block == null || !plugin.isLockable(block)) {
-        	String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
+            String configPath = plugin.getSupportedConfigPath("error-look-at-chest",  "error-look-at-container");
             plugin.sendMessage(player, configPath);
             return true;
         }

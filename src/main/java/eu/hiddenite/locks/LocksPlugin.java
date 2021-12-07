@@ -39,7 +39,7 @@ public class LocksPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new LocksListeners(this, storage), this);
     }
-    
+
     public void sendMessage(Player player, String configPath, Object... parameters) {
         String message = getConfig().getString("messages." + configPath);
         if (message != null) {
@@ -59,14 +59,14 @@ public class LocksPlugin extends JavaPlugin {
         }
         return null;
     }
-    
+
     public boolean isLockable(Block block) {
-    	return block.getState() instanceof Container && (getConfig().getStringList("inventory-lockable").contains(block.getType().toString()) || block.getType() == Material.CHEST);
+        return block.getState() instanceof Container && (getConfig().getStringList("inventory-lockable").contains(block.getType().toString()) || block.getType() == Material.CHEST);
     }
-    
+
     public String getSupportedConfigPath(String oldPath, String newPath) {
-    	if (getConfig().getString("messages." + newPath) != null) return newPath;
-    	else return oldPath;
+        if (getConfig().getString("messages." + newPath) != null) return newPath;
+        else return oldPath;
     }
 
     public void lockContainer(Player player, Block block) {
@@ -82,27 +82,27 @@ public class LocksPlugin extends JavaPlugin {
             return;
         }
 
-        String logBlock = "None";
+        String blockName;
         if (block.getType() == Material.CHEST) {
-	    Chest chest = (Chest)block.getState();
-	    Chest[] chestSides = getChestSides(chest);
+            Chest chest = (Chest)block.getState();
+            Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
-	        storage.lockContainer(side.getBlock());
-	    }
-	    logBlock = chestSides.length == 2 ? "double-chest" : "chest";
-    	} else {
-    	    storage.lockContainer(block);
-    	    logBlock = block.getType().toString();
-     	}
-        
+                storage.lockContainer(side.getBlock());
+            }
+            blockName = chestSides.length == 2 ? "double-chest" : "chest";
+        } else {
+            storage.lockContainer(block);
+            blockName = block.getType().toString();
+        }
+
         getLogger().info(String.format(
-        		"Player %s locked the %s %s:[%d, %d, %d].",
-        		player.getName(),
-        		logBlock,
-                        player.getWorld().getName(),
-                        block.getX(),
-                        block.getY(),
-                        block.getZ()));
+                "Player %s locked the %s %s:[%d, %d, %d].",
+                player.getName(),
+                blockName,
+                player.getWorld().getName(),
+                block.getX(),
+                block.getY(),
+                block.getZ()));
 
         sendMessage(player, "lock-success");
     }
@@ -114,25 +114,25 @@ public class LocksPlugin extends JavaPlugin {
 
         String logBlock = "None";
         if (block.getType() == Material.CHEST) {
-	    Chest chest = (Chest)block.getState();
-	    Chest[] chestSides = getChestSides(chest);
+            Chest chest = (Chest)block.getState();
+            Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
-	        storage.unlockContainer(side.getBlock());
-	    }
-	    logBlock = chestSides.length == 2 ? "double-chest" : "chest";
-    	} else {
-    	    storage.unlockContainer(block);
-    	    logBlock = block.getType().toString();
-     	}
-        
+                storage.unlockContainer(side.getBlock());
+            }
+            logBlock = chestSides.length == 2 ? "double-chest" : "chest";
+        } else {
+            storage.unlockContainer(block);
+            logBlock = block.getType().toString();
+        }
+
         getLogger().info(String.format(
-        		"Player %s unlocked the %s %s:[%d, %d, %d].",
-        		player.getName(),
-        		logBlock,
-                        player.getWorld().getName(),
-                        block.getX(),
-                        block.getY(),
-                        block.getZ()));
+                "Player %s unlocked the %s %s:[%d, %d, %d].",
+                player.getName(),
+                logBlock,
+                player.getWorld().getName(),
+                block.getX(),
+                block.getY(),
+                block.getZ()));
 
         sendMessage(player, "unlock-success");
     }
@@ -161,7 +161,7 @@ public class LocksPlugin extends JavaPlugin {
             for (Chest side : chestSides) {
                 storage.setContainerUsers(side.getBlock(), allowedUsers);
             }
-    	} else storage.setContainerUsers(block, allowedUsers);
+        } else storage.setContainerUsers(block, allowedUsers);
 
         sendMessage(owner, "lock-add-success", "{NAME}", target.getName());
     }
@@ -187,7 +187,7 @@ public class LocksPlugin extends JavaPlugin {
             for (Chest side : chestSides) {
                 storage.setContainerUsers(side.getBlock(), allowedUsers);
             }
-    	} else storage.setContainerUsers(block, allowedUsers);
+        } else storage.setContainerUsers(block, allowedUsers);
 
         sendMessage(owner, "lock-remove-success", "{NAME}", target.getName());
     }

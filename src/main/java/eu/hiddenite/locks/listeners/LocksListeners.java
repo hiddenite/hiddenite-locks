@@ -93,7 +93,7 @@ public class LocksListeners implements Listener {
             event.setCancelled(true);
             sendContainerLockedMessage(player, block, owner);
         } else {
-        	Container container = (Container)block.getState();
+            Container container = (Container)block.getState();
             if (!(container.getInventory() instanceof DoubleChestInventory)) {
                 plugin.sendMessage(player, "unlock-success");
             }
@@ -141,9 +141,9 @@ public class LocksListeners implements Listener {
         if (event.getSource().getHolder() instanceof Container) {
             container = (Container)event.getSource().getHolder();
             if (event.getSource().getHolder() instanceof DoubleChest) {
-	            DoubleChest doubleChest = (DoubleChest)event.getSource().getHolder();
-	            container = (Container)doubleChest.getLeftSide();
-	        }
+                DoubleChest doubleChest = (DoubleChest)event.getSource().getHolder();
+                container = (Container)doubleChest.getLeftSide();
+            }
         }
 
         if (container != null && storage.isContainerLocked(container)) {
