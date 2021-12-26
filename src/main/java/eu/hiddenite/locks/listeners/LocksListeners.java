@@ -49,7 +49,7 @@ public class LocksListeners implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        if (!plugin.isLockable(block)) {
+        if (block.getType() != Material.CHEST) {
             return;
         }
 
@@ -130,9 +130,6 @@ public class LocksListeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
-        if (!plugin.isLockable(event.getSource().getLocation().getBlock())) {
-            return;
-        }
         if (event.getDestination().getType() != InventoryType.HOPPER) {
             return;
         }
@@ -140,10 +137,9 @@ public class LocksListeners implements Listener {
         Container container = null;
         if (event.getSource().getHolder() instanceof Container) {
             container = (Container)event.getSource().getHolder();
-            if (event.getSource().getHolder() instanceof DoubleChest) {
-                DoubleChest doubleChest = (DoubleChest)event.getSource().getHolder();
-                container = (Container)doubleChest.getLeftSide();
-            }
+        } else if (event.getSource().getHolder() instanceof DoubleChest) {
+            DoubleChest doubleChest = (DoubleChest)event.getSource().getHolder();
+            container = (Container)doubleChest.getLeftSide();
         }
 
         if (container != null && storage.isContainerLocked(container)) {
