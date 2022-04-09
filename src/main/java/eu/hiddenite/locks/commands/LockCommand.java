@@ -82,7 +82,7 @@ public class LockCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return Arrays.asList("+", "-", "?");
         }
-        if (args.length >= 2) {
+        if (args.length >= 2 && !args[0].equals("?")) {
             return null; // Player name
         }
         return Collections.emptyList();
