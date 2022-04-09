@@ -1,9 +1,10 @@
 messages:
   lock-success: "§bContainer locked. Use §a/unlock§b to unlock it and §a/lock + <players>§b to add other players."
-  lock-usage: "§a/lock §b[+/- <players>]"
+  lock-usage: "§a/lock §b[+/-/?]"
   unlock-success: "§bContainer unlocked."
   lock-add-success: "§a{NAME}§b can now use this container."
   lock-remove-success: "§a{NAME}§b can no longer use this container."
+  lock-list-success: "§bHere is a list of the players who can access this container : §a{PLAYERS}§b."
   error-look-at-container: "§cYou must look at a container to use this command."
   error-already-locked: "§cThis container is already locked."
   error-not-locked: "§cThis container isn't locked."

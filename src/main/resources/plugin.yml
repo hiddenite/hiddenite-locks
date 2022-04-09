@@ -6,7 +6,7 @@ author: Hiddenite
 commands:
   lock:
     description: "Locks a container."
-    usage: /lock [+/- <joueur>]
+    usage: /lock [+/-/?]
   unlock:
     description: "Unlocks a container."
     usage: /unlock
