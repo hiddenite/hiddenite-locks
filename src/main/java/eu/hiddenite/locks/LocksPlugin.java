@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -190,6 +191,23 @@ public class LocksPlugin extends JavaPlugin {
         } else storage.setContainerUsers(block, allowedUsers);
 
         sendMessage(owner, "lock-remove-success", "{NAME}", target.getName());
+    }
+
+    public void listPlayersAllowedToAccess(Player owner, Block block) {
+        if (invalidOwnerPermissions(owner, block)) {
+            return;
+        }
+
+        List<UUID> allowedUsers = storage.getContainerUsers(block);
+        List<String> allowedUsersNames = new ArrayList<>();
+        allowedUsersNames.add(owner.getName());
+
+        allowedUsers.forEach(user -> {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(user);
+            allowedUsersNames.add(player.getName());
+        });
+
+        sendMessage(owner, "lock-list-success", "{PLAYERS}", String.join(", ", allowedUsersNames));
     }
 
     private boolean invalidOwnerPermissions(Player owner, Block block) {
