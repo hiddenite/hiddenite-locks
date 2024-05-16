@@ -13,7 +13,7 @@ messages:
   error-already-has-no-access: "§6{NAME}§c cannot use this container."
   error-player-does-not-exist: "§cThe player §6{NAME}§c doesn't exist."
   container-locked: "§bThis container was locked by §a{NAME}§b."
-  container-nearby-locked: "§cThe container next to this one is locked."
+  chest-nearby-locked: "§cThe chest next to this one is locked."
 
 inventory-lockable: [
   "CHEST", 
