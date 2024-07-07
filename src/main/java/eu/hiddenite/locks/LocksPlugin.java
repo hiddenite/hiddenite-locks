@@ -4,7 +4,7 @@ import eu.hiddenite.locks.commands.LockCommand;
 import eu.hiddenite.locks.commands.UnlockCommand;
 import eu.hiddenite.locks.listeners.LocksListeners;
 import eu.hiddenite.locks.utils.LocksStorage;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -47,7 +47,7 @@ public class LocksPlugin extends JavaPlugin {
             for (int i = 0; i < parameters.length - 1; i += 2) {
                 message = message.replace(parameters[i].toString(), parameters[i + 1].toString());
             }
-            player.spigot().sendMessage(TextComponent.fromLegacyText(message));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(message));
         }
     }
 
