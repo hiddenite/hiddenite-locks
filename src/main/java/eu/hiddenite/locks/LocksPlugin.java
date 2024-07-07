@@ -88,6 +88,13 @@ public class LocksPlugin extends JavaPlugin {
             Chest chest = (Chest)block.getState();
             Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
+                UUID sideOwner = storage.getContainerOwner(side.getBlock());
+                if (!player.getUniqueId().equals(sideOwner)) {
+                    sendMessage(player, "error-not-owner-side");
+                    return;
+                }
+            }
+            for (Chest side : chestSides) {
                 storage.lockContainer(side.getBlock());
             }
             blockName = chestSides.length == 2 ? "double-chest" : "chest";
@@ -113,23 +120,23 @@ public class LocksPlugin extends JavaPlugin {
             return;
         }
 
-        String logBlock = "None";
+        String blockName;
         if (block.getType() == Material.CHEST) {
             Chest chest = (Chest)block.getState();
             Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
                 storage.unlockContainer(side.getBlock());
             }
-            logBlock = chestSides.length == 2 ? "double-chest" : "chest";
+            blockName = chestSides.length == 2 ? "double-chest" : "chest";
         } else {
             storage.unlockContainer(block);
-            logBlock = block.getType().toString();
+            blockName = block.getType().toString();
         }
 
         getLogger().info(String.format(
                 "Player %s unlocked the %s %s:[%d, %d, %d].",
                 player.getName(),
-                logBlock,
+                blockName,
                 player.getWorld().getName(),
                 block.getX(),
                 block.getY(),

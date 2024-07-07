@@ -9,6 +9,7 @@ messages:
   error-already-locked: "§cThis container is already locked."
   error-not-locked: "§cThis container isn't locked."
   error-not-owner: "§cThis container doesn't belong to you."
+  error-not-owner-side: "§cThe other part of this chest doesn't belong to you."
   error-already-has-access: "§6{NAME}§c can already use this container."
   error-already-has-no-access: "§6{NAME}§c cannot use this container."
   error-player-does-not-exist: "§cThe player §6{NAME}§c doesn't exist."

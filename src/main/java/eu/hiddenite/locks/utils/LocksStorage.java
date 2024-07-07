@@ -89,7 +89,7 @@ public class LocksStorage {
             return new ArrayList<>();
         }
         String usersData = container.getPersistentDataContainer().get(usersNamespaceKey, PersistentDataType.STRING);
-        if (usersData == null || usersData.length() == 0) {
+        if (usersData == null || usersData.isEmpty()) {
             return new ArrayList<>();
         }
         return Arrays.stream(usersData.split(";")).map(UUID::fromString).collect(Collectors.toList());
