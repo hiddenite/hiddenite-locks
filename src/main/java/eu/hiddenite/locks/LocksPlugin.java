@@ -200,21 +200,24 @@ public class LocksPlugin extends JavaPlugin {
         sendMessage(owner, "lock-remove-success", "{NAME}", target.getName());
     }
 
-    public void listPlayersAllowedToAccess(Player owner, Block block) {
-        if (invalidOwnerPermissions(owner, block)) {
+    public void listPlayersAllowedToAccess(Player player, Block block) {
+        if (invalidOwnerPermissions(player, block)) {
             return;
         }
 
         List<UUID> allowedUsers = storage.getContainerUsers(block);
         List<String> allowedUsersNames = new ArrayList<>();
+
+        UUID ownerId = storage.getContainerOwner(block);
+        OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
         allowedUsersNames.add(owner.getName());
 
         allowedUsers.forEach(user -> {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(user);
-            allowedUsersNames.add(player.getName());
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user);
+            allowedUsersNames.add(offlinePlayer.getName());
         });
 
-        sendMessage(owner, "lock-list-success", "{PLAYERS}", String.join(", ", allowedUsersNames));
+        sendMessage(player, "lock-list-success", "{PLAYERS}", String.join(", ", allowedUsersNames));
     }
 
     private boolean invalidOwnerPermissions(Player owner, Block block) {
