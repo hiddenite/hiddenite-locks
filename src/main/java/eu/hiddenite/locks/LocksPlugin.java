@@ -84,7 +84,7 @@ public class LocksPlugin extends JavaPlugin {
         }
 
         String blockName;
-        if (block.getType() == Material.CHEST) {
+        if (isChestMaterial(block.getType())) {
             Chest chest = (Chest)block.getState();
             Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
@@ -97,7 +97,7 @@ public class LocksPlugin extends JavaPlugin {
             for (Chest side : chestSides) {
                 storage.lockContainer(side.getBlock());
             }
-            blockName = chestSides.length == 2 ? "double-chest" : "chest";
+            blockName = (chestSides.length == 2 ? "double-chest " : "chest ") + block.getType();
         } else {
             storage.lockContainer(block);
             blockName = block.getType().toString();
@@ -121,13 +121,13 @@ public class LocksPlugin extends JavaPlugin {
         }
 
         String blockName;
-        if (block.getType() == Material.CHEST) {
+        if (isChestMaterial(block.getType())) {
             Chest chest = (Chest)block.getState();
             Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
                 storage.unlockContainer(side.getBlock());
             }
-            blockName = chestSides.length == 2 ? "double-chest" : "chest";
+            blockName = (chestSides.length == 2 ? "double-chest " : "chest ") + block.getType();
         } else {
             storage.unlockContainer(block);
             blockName = block.getType().toString();
@@ -163,7 +163,7 @@ public class LocksPlugin extends JavaPlugin {
 
         allowedUsers.add(target.getUniqueId());
 
-        if (block.getType() == Material.CHEST) {
+        if (isChestMaterial(block.getType())) {
             Chest chest = (Chest)block.getState();
             Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
@@ -189,7 +189,7 @@ public class LocksPlugin extends JavaPlugin {
             return;
         }
 
-        if (block.getType() == Material.CHEST) {
+        if (isChestMaterial(block.getType())) {
             Chest chest = (Chest)block.getState();
             Chest[] chestSides = getChestSides(chest);
             for (Chest side : chestSides) {
@@ -253,5 +253,17 @@ public class LocksPlugin extends JavaPlugin {
         } else {
             return new Chest[] { chest };
         }
+    }
+
+    public static boolean isChestMaterial(Material material) {
+        return material == Material.CHEST ||
+                material == Material.COPPER_CHEST ||
+                material == Material.EXPOSED_COPPER_CHEST ||
+                material == Material.WEATHERED_COPPER_CHEST ||
+                material == Material.OXIDIZED_COPPER_CHEST ||
+                material == Material.WAXED_COPPER_CHEST ||
+                material == Material.WAXED_EXPOSED_COPPER_CHEST ||
+                material == Material.WAXED_WEATHERED_COPPER_CHEST ||
+                material == Material.WAXED_OXIDIZED_COPPER_CHEST;
     }
 }

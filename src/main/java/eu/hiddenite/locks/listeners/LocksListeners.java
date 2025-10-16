@@ -2,8 +2,8 @@ package eu.hiddenite.locks.listeners;
 
 import eu.hiddenite.locks.LocksPlugin;
 import eu.hiddenite.locks.utils.LocksStorage;
+import io.papermc.paper.event.entity.ItemTransportingEntityValidateTargetEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
@@ -14,13 +14,16 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,12 +47,35 @@ public class LocksListeners implements Listener {
         storage.setContainerOwner(block, player.getUniqueId());
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onCreatureSpawnMonitor(final CreatureSpawnEvent event) {
+        if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.BUILD_COPPERGOLEM) {
+            return;
+        }
+
+        Collection<Player> builders = event.getLocation().getNearbyPlayers(3);
+        double minDistance = 10.0;
+        Player bestPlayer = null;
+        for (Player player : builders) {
+            double distance = player.getLocation().distance(event.getLocation());
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestPlayer = player;
+            }
+        }
+
+        if (bestPlayer != null) {
+            plugin.getLogger().info("Player " + bestPlayer.getName() + " probably summoned a copper golem at " + event.getLocation());
+            storage.setEntityOwner(event.getEntity(), bestPlayer.getUniqueId());
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        if (block.getType() != Material.CHEST) {
+        if (!LocksPlugin.isChestMaterial(block.getType())) {
             return;
         }
 
@@ -65,7 +91,7 @@ public class LocksListeners implements Listener {
     }
 
     private boolean isBlockSingleLockedChest(Block block) {
-        if (block.getType() != Material.CHEST) {
+        if (!LocksPlugin.isChestMaterial(block.getType())) {
             return false;
         }
         Chest chest = (Chest)block.getState();
@@ -125,6 +151,28 @@ public class LocksListeners implements Listener {
                     event.setCancelled(true);
                 }
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onItemTransportingEntityValidateTarget(final ItemTransportingEntityValidateTargetEvent event) {
+        Block block = event.getBlock();
+        if (!plugin.isLockable(block)) {
+            return;
+        }
+        if (!storage.isContainerLocked(block)) {
+            return;
+        }
+        UUID entityOwner = storage.getEntityOwner(event.getEntity());
+        if (entityOwner == null) {
+            event.setAllowed(false);
+            return;
+        }
+
+        UUID containerOwner = storage.getContainerOwner(block);
+        List<UUID> containerUsers = storage.getContainerUsers(block);
+        if (!entityOwner.equals(containerOwner) && !containerUsers.contains(entityOwner)) {
+            event.setAllowed(false);
         }
     }
 

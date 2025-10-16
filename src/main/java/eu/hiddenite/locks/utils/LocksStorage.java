@@ -4,6 +4,8 @@ import eu.hiddenite.locks.LocksPlugin;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.entity.Entity;
+import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -49,10 +51,18 @@ public class LocksStorage {
     }
 
     public UUID getContainerOwner(Container container) {
-        if (container == null) {
+        return getDataHolderOwner(container);
+    }
+
+    public UUID getEntityOwner(Entity entity) {
+        return getDataHolderOwner(entity);
+    }
+
+    private UUID getDataHolderOwner(PersistentDataHolder dataHolder) {
+        if (dataHolder == null) {
             return null;
         }
-        String ownerData = container.getPersistentDataContainer().get(ownerNamespaceKey, PersistentDataType.STRING);
+        String ownerData = dataHolder.getPersistentDataContainer().get(ownerNamespaceKey, PersistentDataType.STRING);
         if (ownerData == null) {
             return null;
         }
@@ -63,6 +73,10 @@ public class LocksStorage {
         Container container = (Container)block.getState();
         container.getPersistentDataContainer().set(ownerNamespaceKey, PersistentDataType.STRING, owner.toString());
         container.update();
+    }
+
+    public void setEntityOwner(Entity entity, UUID owner) {
+        entity.getPersistentDataContainer().set(ownerNamespaceKey, PersistentDataType.STRING, owner.toString());
     }
 
     public void lockContainer(Block block) {
